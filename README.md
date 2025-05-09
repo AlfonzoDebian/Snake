@@ -1,9 +1,15 @@
 # The Snake by Alfonzo [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
+
+
+
+
 # 🐍 The Purple Snake
 
 Este es un juego del tipo *Snake* (la serpiente), hecho con Python y Pygame. ¡Tú controlas una serpiente que crece cada vez que come comida! Pero si se choca con las paredes o consigo misma... ¡pierdes!
 
+
+![](./snake.png)
 ---
 
 ## 🎮 ¿Cómo funciona el juego?
@@ -137,6 +143,11 @@ welcome()
   - `Music/` con las canciones (`bgm.mp3`, `bgm2.mp3`)
 - Archivo `highscore.txt` (opcional, se crea solo)
 
----
+
+
+![](./unnamed%20(2).png)
+
 
 ¡Y eso es todo! Ahora puedes leer el código, entenderlo paso a paso, y modificarlo para hacerlo aún más divertido. 🎉
+
+![](./draw.png)
