@@ -19,16 +19,33 @@ MUSIC_BGM = 'Music/bgm.mp3'
 MUSIC_GAMEOVER = 'Music/bgm2.mp3'
 
 # Fuente personalizada
-FONT_PATH = "Pixellari.ttf"  # Asegúrate de que este archivo exista
-font = pygame.font.Font(FONT_PATH, 35)
+FONT_PATH = "Pixellari.ttf"
+BASE_FONT_SIZE = 35
+font = pygame.font.Font(FONT_PATH, BASE_FONT_SIZE)
 
 # Ventana
 gameWindow = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("The Snake")
 clock = pygame.time.Clock()
 
-def text_screen(text, color, x, y):
-    gameWindow.blit(font.render(text, True, color), (x, y))
+# Función para mostrar texto con tamaño dinámico
+def draw_score(score, highscore, last_score_time):
+    time_now = pygame.time.get_ticks()
+    time_since = time_now - last_score_time if last_score_time else 1000
+
+    # Duración de la animación
+    if time_since < 1000:
+        if time_since < 500:
+            scale = BASE_FONT_SIZE + (10 * time_since // 500)  # 35 a 45
+        else:
+            scale = 45 - (10 * (time_since - 500) // 500)       # 45 a 35
+    else:
+        scale = BASE_FONT_SIZE
+
+    anim_font = pygame.font.Font(FONT_PATH, scale)
+    text = f"Puntos: {score}  Record: {highscore}"
+    rendered = anim_font.render(text, True, WHITE)
+    gameWindow.blit(rendered, (5, 5))
 
 def plot_snake(gameWindow, snk_list, direction):
     now = pygame.time.get_ticks()
@@ -38,9 +55,8 @@ def plot_snake(gameWindow, snk_list, direction):
         x, y = pos
         body_color = (34, 139, 34) if i % 2 == 0 else (0, 100, 0)
 
-        if i == len(snk_list) - 1:  # Cabeza de la serpiente
+        if i == len(snk_list) - 1:
             pygame.draw.rect(gameWindow, body_color, (x, y, SNAKE_SIZE, SNAKE_SIZE))
-
             eye_radius = 6
             pupil_radius = 2
 
@@ -62,20 +78,15 @@ def plot_snake(gameWindow, snk_list, direction):
                 tongue_start = (x + 15, y)
                 tongue_dir = (0, -1)
 
-            # Ojos y pupilas
             pygame.draw.circle(gameWindow, WHITE, eye1_pos, eye_radius)
             pygame.draw.circle(gameWindow, WHITE, eye2_pos, eye_radius)
             pygame.draw.circle(gameWindow, BLACK, (eye1_pos[0] + pupil_offset[0], eye1_pos[1] + pupil_offset[1]), pupil_radius)
             pygame.draw.circle(gameWindow, BLACK, (eye2_pos[0] + pupil_offset[0], eye2_pos[1] + pupil_offset[1]), pupil_radius)
 
-            # Brillo de ojos
             pygame.draw.circle(gameWindow, WHITE, (eye1_pos[0] - 2, eye1_pos[1] - 2), 1)
             pygame.draw.circle(gameWindow, WHITE, (eye2_pos[0] - 2, eye2_pos[1] - 2), 1)
-
-            # Boca
             pygame.draw.line(gameWindow, BLACK, (x + 12, y + 27), (x + 18, y + 27), 2)
 
-            # Lengua
             if tongue_show:
                 t1 = (tongue_start[0] + tongue_dir[0] * 10, tongue_start[1] + tongue_dir[1] * 10)
                 t2 = (t1[0] + 4, t1[1] + 4)
@@ -99,7 +110,6 @@ def update_highscore(score):
 def welcome():
     pygame.mixer.music.load(MUSIC_BGM)
     pygame.mixer.music.play(-1)
-
     while True:
         gameWindow.blit(BG_INTRO, (0, 0))
         for event in pygame.event.get():
@@ -108,7 +118,6 @@ def welcome():
                 return
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 gameloop()
-
         pygame.display.update()
         clock.tick(FPS)
 
@@ -120,13 +129,11 @@ def gameloop():
     score, highscore = 0, read_highscore()
     food_x, food_y = random.randint(20, SCREEN_WIDTH // 2), random.randint(20, SCREEN_HEIGHT // 2)
     last_direction = "RIGHT"
-
-    # Statusimg = pygame.image.load("sprite/Status.png")
-    # Statusimg = pygame.transform.scale(Statusimg, (160, 160))
+    last_score_time = None
 
     while True:
         gameWindow.blit(BG_GAME, (0, 0))
-        text_screen(f"Puntos: {score}  Record: {highscore}", WHITE, 5, 5)
+        draw_score(score, highscore, last_score_time)
         pygame.draw.rect(gameWindow, RED, (food_x, food_y, SNAKE_SIZE, SNAKE_SIZE))
 
         for event in pygame.event.get():
@@ -161,7 +168,6 @@ def gameloop():
         snake_x += velocity_x
         snake_y += velocity_y
         snk_list.append((snake_x, snake_y))
-
         if len(snk_list) > snk_length:
             snk_list.pop(0)
 
@@ -170,16 +176,17 @@ def gameloop():
             food_x, food_y = random.randint(20, SCREEN_WIDTH // 2), random.randint(20, SCREEN_HEIGHT // 2)
             snk_length += 5
             highscore = max(highscore, score)
+            last_score_time = pygame.time.get_ticks()
 
         if (snake_x < 0 or snake_x > SCREEN_WIDTH or 
             snake_y < 0 or snake_y > SCREEN_HEIGHT or 
             (snake_x, snake_y) in snk_list[:-1]):
             update_highscore(highscore)
             gameWindow.blit(BG_OUTRO, (0, 0))
-            text_screen(f"Puntuación: {score}", WHITE, 385, 350)
+            font_end = pygame.font.Font(FONT_PATH, 35)
+            gameWindow.blit(font_end.render(f"Puntuación: {score}", True, WHITE), (385, 350))
             pygame.mixer.music.load(MUSIC_GAMEOVER)
             pygame.mixer.music.play(-1)
-
             while True:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -190,7 +197,6 @@ def gameloop():
                 pygame.display.update()
 
         plot_snake(gameWindow, snk_list, last_direction)
-      #  gameWindow.blit(Statusimg, (0, 420))
         pygame.display.update()
         clock.tick(FPS)
 
