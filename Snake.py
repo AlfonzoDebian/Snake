@@ -6,6 +6,9 @@ import os
 pygame.init()
 pygame.mixer.init()
 
+# Sonido de colisión con la comida
+EAT_SOUND = pygame.mixer.Sound("Music/cs.mp3")
+
 # Colores y constantes
 SCREEN_WIDTH, SCREEN_HEIGHT = 900, 600
 WHITE, RED, BLACK, SNAKE_GREEN = (255, 255, 255), (255, 0, 0), (0, 0, 0), (35, 45, 40)
@@ -28,17 +31,15 @@ gameWindow = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("The Snake")
 clock = pygame.time.Clock()
 
-# Función para mostrar texto con tamaño dinámico
 def draw_score(score, highscore, last_score_time):
     time_now = pygame.time.get_ticks()
     time_since = time_now - last_score_time if last_score_time else 1000
 
-    # Duración de la animación
     if time_since < 1000:
         if time_since < 500:
-            scale = BASE_FONT_SIZE + (10 * time_since // 500)  # 35 a 45
+            scale = BASE_FONT_SIZE + (10 * time_since // 500)
         else:
-            scale = 45 - (10 * (time_since - 500) // 500)       # 45 a 35
+            scale = 45 - (10 * (time_since - 500) // 500)
     else:
         scale = BASE_FONT_SIZE
 
@@ -82,7 +83,6 @@ def plot_snake(gameWindow, snk_list, direction):
             pygame.draw.circle(gameWindow, WHITE, eye2_pos, eye_radius)
             pygame.draw.circle(gameWindow, BLACK, (eye1_pos[0] + pupil_offset[0], eye1_pos[1] + pupil_offset[1]), pupil_radius)
             pygame.draw.circle(gameWindow, BLACK, (eye2_pos[0] + pupil_offset[0], eye2_pos[1] + pupil_offset[1]), pupil_radius)
-
             pygame.draw.circle(gameWindow, WHITE, (eye1_pos[0] - 2, eye1_pos[1] - 2), 1)
             pygame.draw.circle(gameWindow, WHITE, (eye2_pos[0] - 2, eye2_pos[1] - 2), 1)
             pygame.draw.line(gameWindow, BLACK, (x + 12, y + 27), (x + 18, y + 27), 2)
@@ -172,6 +172,7 @@ def gameloop():
             snk_list.pop(0)
 
         if abs(snake_x - food_x) < 20 and abs(snake_y - food_y) < 20:
+            EAT_SOUND.play()  # <<< SONIDO AQUÍ
             score += 10
             food_x, food_y = random.randint(20, SCREEN_WIDTH // 2), random.randint(20, SCREEN_HEIGHT // 2)
             snk_length += 5
@@ -184,7 +185,7 @@ def gameloop():
             update_highscore(highscore)
             gameWindow.blit(BG_OUTRO, (0, 0))
             font_end = pygame.font.Font(FONT_PATH, 35)
-            gameWindow.blit(font_end.render(f"Puntuación: {score}", True, WHITE), (385, 350))
+            gameWindow.blit(font_end.render(f"Puntuación: {score}", True, WHITE), (360, 500))
             pygame.mixer.music.load(MUSIC_GAMEOVER)
             pygame.mixer.music.play(-1)
             while True:
