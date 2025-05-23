@@ -2,31 +2,30 @@ import pygame
 import random
 import os
 
-# Inicio
+
 pygame.init()
 pygame.mixer.init()
 
-# Sonido de colisión con la comida
+
 EAT_SOUND = pygame.mixer.Sound("Music/cs.mp3")
 
-# Colores y constantes
+
 SCREEN_WIDTH, SCREEN_HEIGHT = 900, 600
 WHITE, RED, BLACK, SNAKE_GREEN = (255, 255, 255), (255, 0, 0), (0, 0, 0), (35, 45, 40)
 INIT_VELOCITY, SNAKE_SIZE, FPS = 5, 30, 60
 
-# Recursos
+
 BG_INTRO = pygame.image.load("Screen/Intro1.png")
 BG_GAME = pygame.image.load("Screen/bg2.png")
 BG_OUTRO = pygame.image.load("Screen/outro.png")
 MUSIC_BGM = 'Music/bgm.mp3'
 MUSIC_GAMEOVER = 'Music/bgm2.mp3'
 
-# Fuente personalizada
 FONT_PATH = "Pixellari.ttf"
 BASE_FONT_SIZE = 35
 font = pygame.font.Font(FONT_PATH, BASE_FONT_SIZE)
 
-# Ventana
+
 gameWindow = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("The Snake")
 clock = pygame.time.Clock()
