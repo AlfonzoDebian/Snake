@@ -146,5 +146,7 @@ welcome()
 ![](./SN%20(5).png)
 
 
+https://www.canva.com/design/DAGm9Mhfyn4/-YSF1QxNFA31cahiliXB7g/edit?utm_content=DAGm9Mhfyn4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
 ¡Y eso es todo! Ahora puedes leer el código, entenderlo paso a paso, y modificarlo para hacerlo aún más divertido. 🎉
 
